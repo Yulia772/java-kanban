@@ -1,3 +1,7 @@
+package manager;
+
+import task.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,17 +17,19 @@ public class TaskManager {
         return idCounter++;
     }
 
-    public void addTask(Task task) {
+    public Task addTask(Task task) {
         task.setId(generateId());
         tasks.put(task.getId(), task);
+        return task;
     }
 
-    public void addEpic(Epic epic) {
+    public Epic addEpic(Epic epic) {
         epic.setId(generateId());
         epics.put(epic.getId(), epic);
+        return epic;
     }
 
-    public void addSubtask(Subtask subtask) {
+    public Subtask addSubtask(Subtask subtask) {
         subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
 
@@ -32,6 +38,7 @@ public class TaskManager {
             epic.addSubtaskId(subtask.getId());
             updateEpicStatus(epic);
         }
+        return subtask;
     }
 
     public Task getTask(int id) {

@@ -1,10 +1,12 @@
-import java.util.*;
+package task;
+
+import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private int id;
-    private Status status;
+    protected String name;
+    protected String description;
+    protected int id;
+    protected Status status;
 
     public Task(String name, String description, Status status) {
         this.name = name;
@@ -55,6 +57,6 @@ public class Task {
 
     @Override
     public String toString () {
-        return "Task{id=" + id + ", name='" + getName() + " ', status=" + status + "}";
+        return "Task{id=" + id + ", name='" + name + " ', status=" + status + "}";
     }
 }
