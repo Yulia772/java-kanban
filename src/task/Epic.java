@@ -16,6 +16,10 @@ public class Epic extends Task {
     }
 
     public void addSubtaskId(int subtaskId) {
+        if (subtaskId == this.id) {
+            System.out.println("Нельзя добавить эпик как субтаск");
+            return;
+        }
         subtaskIds.add(subtaskId);
     }
 
