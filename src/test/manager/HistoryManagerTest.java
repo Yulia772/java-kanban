@@ -8,6 +8,7 @@ import task.Status;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HistoryManagerTest {
 
@@ -33,7 +34,7 @@ public class HistoryManagerTest {
     }
 
     @Test
-    void shouldPreventDublicatsAndMoveTaskToEnd() {
+    void shouldPreventDuplicatesAndMoveTaskToEnd() {
         Task task1 = new Task("Task1", "Description1", Status.NEW);
         Task task2 = new Task("Task2", "Description2", Status.NEW);
         Task task3 = new Task("Task3", "Description3", Status.NEW);
@@ -54,5 +55,35 @@ public class HistoryManagerTest {
 
         assertEquals(4, history.size(), "History should still contains only 3 task.");
         assertEquals(task2, history.get(history.size() - 1), "Task2 should be move to the end.");
+        assertEquals(task1, history.get(0), "Task1 should remain in the first position.");
+        assertEquals(task3, history.get(1), "Task3 should remain in the second position");
+        assertEquals(task4, history.get(2), "Task4 should be in the second position");
+    }
+
+    @Test
+    void shouldLimitHistoryToMaxTasks() {
+        for (int i = 1; i <= 15; i++) {
+            Task task = new Task("Task" + i, "Description" + i, Status.NEW);
+            task.setId(i);
+            historyManager.add(task);
+        }
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(10, history.size(), "History size should not exceed the limit of 10.");
+
+        for (int i = 0; i < 10; i++) {
+            int expectedTaskId = i + 6;
+            assertEquals(expectedTaskId, history.get(i).getId(), "History should only contain last 10 tasks.");
+        }
+    }
+
+    @Test
+    void shouldNotAddNullTask() {
+        assertTrue(historyManager.getHistory().isEmpty(), "History Should be empty initially");
+
+        historyManager.add(null);
+
+        List<Task> history = historyManager.getHistory();
+        assertTrue(history.isEmpty(), "History should still be empty after adding null.");
     }
 }
