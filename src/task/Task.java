@@ -38,6 +38,12 @@ public class Task {
         this.status = status;
     }
 
+    public Task copy() {
+        Task copy = new Task(this.name, this.description, this.status);
+        copy.setId(this.id);
+        return copy;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -56,7 +62,7 @@ public class Task {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Task{id=" + id + ", name='" + name + " ', status=" + status + "}";
     }
 }

@@ -28,7 +28,16 @@ public class Epic extends Task {
     }
 
     @Override
+    public Epic copy() {
+        Epic copy = new Epic(this.name, this.description);
+        copy.setId(this.id);
+        copy.status = this.status;
+        copy.subtaskIds = new ArrayList<>(this.subtaskIds);
+        return copy;
+    }
+
+    @Override
     public String toString() {
-        return "Epic{id=" + id +", name='" + name + "', status=" + status + ", subtaskIds=" + subtaskIds + "}";
+        return "Epic{id=" + id + ", name='" + name + "', status=" + status + ", subtaskIds=" + subtaskIds + "}";
     }
 }
