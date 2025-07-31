@@ -1,6 +1,9 @@
 package manager;
 
-import task.*;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,39 +21,53 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = Managers.getDefaultHistory();
     }
 
-    private  int generateId() {
+    private int generateId() {
         return idCounter++;
     }
 
     @Override
     public Task addTask(Task task) {
-        task.setId(generateId());
-        tasks.put(task.getId(), task);
-        return task;
+        int id = generateId();
+        Task copy = task.copy();
+        copy.setId(id);
+        tasks.put(id, copy);
+        return copy;
     }
 
     @Override
     public Epic addEpic(Epic epic) {
-        epic.setId(generateId());
-        epics.put(epic.getId(), epic);
-        return epic;
+        int id = generateId();
+        Epic copy = epic.copy();
+        copy.setId(id);
+        epics.put(id, copy);
+        return copy;
     }
 
     @Override
     public Subtask addSubtask(Subtask subtask) {
-        if (subtask.getEpicId() == subtask.getId()) {
+
+        int id = generateId();
+        Subtask copy = subtask.copy();
+        copy.setId(id);
+
+        if (copy.getEpicId() == copy.getId()) {
             System.out.println("Subtask cannot be its own epic.");
             return null;
         }
-        subtask.setId(generateId());
-        subtasks.put(subtask.getId(), subtask);
 
-        Epic epic = epics.get((subtask.getEpicId()));
-        if (epic != null) {
-            epic.addSubtaskId(subtask.getId());
-            updateEpicStatus(epic);
+        if (!epics.containsKey(copy.getEpicId())) {
+            System.out.println("Subtask refers to non-existent epic");
+            return null;
         }
-        return subtask;
+
+        subtasks.put(id, copy);
+
+        Epic epic = epics.get((copy.getEpicId()));
+        epic.addSubtaskId(copy.getId());
+        updateEpicStatus(epic);
+
+        historyManager.add(copy);
+        return copy;
     }
 
     @Override
@@ -83,6 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -91,7 +109,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) {
             for (int subtaskId : epic.getSubtaskIds()) {
                 subtasks.remove(subtaskId);
+                historyManager.remove(subtaskId);
             }
+            historyManager.remove(id);
         }
     }
 
@@ -104,6 +124,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.removeSubtaskId(id);
                 updateEpicStatus(epic);
             }
+            historyManager.remove(id);
         }
     }
 

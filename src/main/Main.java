@@ -1,46 +1,63 @@
 package main;
 
-import manager.TaskManager;
 import manager.Managers;
-import task.*;
-import java.util.List;
+import manager.TaskManager;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 
 public class Main {
 
     public static void main(String[] args) {
-       TaskManager manager = Managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
-       Task task1 = new Task("Задача1", "полить цветы", Status.NEW);
-       Task task2 = new Task("Задача2", "убрать в комнате", Status.IN_PROGRESS);
-       manager.addTask(task1);
-       manager.addTask(task2);
+        Task task1 = new Task("Задача1", "полить цветы", Status.NEW);
+        Task task2 = new Task("Задача2", "убрать в комнате", Status.NEW);
+        task1 = taskManager.addTask(task1);
+        task2 = taskManager.addTask(task2);
 
-       Epic epic1 = new Epic("Epic1", "переезд");
-       manager.addEpic(epic1);
-       Subtask subtask1 = new Subtask("Subtask1", "Упаковать коробки", Status.NEW, epic1.getId());
-       Subtask subtask2 = new Subtask("Subtask2", "перенести вещи", Status.DONE, epic1.getId());
-       manager.addSubtask(subtask1);
-       manager.addSubtask(subtask2);
+        Epic epicWithSubs = new Epic("Эпик с подзадачами", "переезд");
+        epicWithSubs = taskManager.addEpic(epicWithSubs);
+        int epicId = epicWithSubs.getId();
 
-       Epic epic2 = new Epic("Epic2", "полить цветы");
-       manager.addEpic(epic2);
+        Subtask sub1 = new Subtask("Подзадача1", "Упаковать коробки", Status.NEW, epicWithSubs.getId());
+        Subtask sub2 = new Subtask("Подзадача2", "перенести вещи", Status.IN_PROGRESS, epicWithSubs.getId());
+        Subtask sub3 = new Subtask("Подзадача3", "загрузить машину", Status.DONE, epicWithSubs.getId());
 
-       Subtask subtask3 = new Subtask("Subtask3", "набрать воду", Status.IN_PROGRESS, epic2.getId());
-       manager.addSubtask(subtask3);
+        sub1 = taskManager.addSubtask(sub1);
+        sub2 = taskManager.addSubtask(sub2);
+        sub3 = taskManager.addSubtask(sub3);
 
-       List<Subtask> subtasks = manager.getSubtasksByEpic(epic1.getId());
-       System.out.println("Подзадачи для эпика " + epic1.getName() + "':");
-       for (Subtask subtask : subtasks) {
-          System.out.println(subtask);
-       }
+        Epic epicWithoutSubs = new Epic("Эпик без подзадач", "полить цветы");
+        epicWithoutSubs = taskManager.addEpic(epicWithoutSubs);
 
-       System.out.println("Начальная история:");
-       System.out.println(manager.getHistory());
-       manager.getTask(task1.getId());
-       manager.getEpic(epic1.getId());
-       manager.getSubtask(subtask1.getId());
+        taskManager.getTask(task1.getId());
+        taskManager.getEpic(epicWithSubs.getId());
+        taskManager.getTask(task2.getId());
+        taskManager.getSubtask(sub2.getId());
+        taskManager.getEpic(epicWithoutSubs.getId());
+        taskManager.getSubtask(sub1.getId());
+        taskManager.getSubtask(sub3.getId());
+        taskManager.getSubtask(sub1.getId());
 
-       System.out.println("Обновленная история:");
-       System.out.println(manager.getHistory());
+        System.out.println("История просмотров:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
+
+        taskManager.deleteTask(task1.getId());
+
+        System.out.println("\nИстория после удаления task1:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
+
+        taskManager.deleteEpic(epicWithSubs.getId());
+
+        System.out.println("\nИстория после удаления эпика с подзадачами");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }

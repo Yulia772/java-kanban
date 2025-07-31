@@ -2,8 +2,8 @@ package manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import task.Task;
 import task.Status;
+import task.Task;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class HistoryManagerTest {
         task1.setId(1);
         task2.setId(2);
         task3.setId(3);
-        task3.setId(4);
+        task4.setId(4);
 
         historyManager.add(task1);
         historyManager.add(task2);
@@ -53,28 +53,11 @@ public class HistoryManagerTest {
 
         List<Task> history = historyManager.getHistory();
 
-        assertEquals(4, history.size(), "History should still contains only 3 task.");
-        assertEquals(task2, history.get(history.size() - 1), "Task2 should be move to the end.");
-        assertEquals(task1, history.get(0), "Task1 should remain in the first position.");
-        assertEquals(task3, history.get(1), "Task3 should remain in the second position");
-        assertEquals(task4, history.get(2), "Task4 should be in the second position");
-    }
-
-    @Test
-    void shouldLimitHistoryToMaxTasks() {
-        for (int i = 1; i <= 15; i++) {
-            Task task = new Task("Task" + i, "Description" + i, Status.NEW);
-            task.setId(i);
-            historyManager.add(task);
-        }
-
-        List<Task> history = historyManager.getHistory();
-        assertEquals(10, history.size(), "History size should not exceed the limit of 10.");
-
-        for (int i = 0; i < 10; i++) {
-            int expectedTaskId = i + 6;
-            assertEquals(expectedTaskId, history.get(i).getId(), "History should only contain last 10 tasks.");
-        }
+        assertEquals(4, history.size(), "History should still contain 4 task.");
+        assertEquals(task1, history.get(0), "Task1 should remain at the beginning.");
+        assertEquals(task3, history.get(1), "Task3 should be second.");
+        assertEquals(task4, history.get(2), "Task4 should be third");
+        assertEquals(task2, history.get(3), "Task2 should be moved to the end");
     }
 
     @Test
@@ -85,5 +68,42 @@ public class HistoryManagerTest {
 
         List<Task> history = historyManager.getHistory();
         assertTrue(history.isEmpty(), "History should still be empty after adding null.");
+    }
+
+    @Test
+    void shouldRemoveTaskFromHistory() {
+        Task task1 = new Task("Task1", "Desc", Status.NEW);
+        task1.setId(1);
+        Task task2 = new Task("Task2", "Desc", Status.NEW);
+        task2.setId(2);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+
+        historyManager.remove(1);
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(1, history.size(), "Only one task shouid remain");
+        assertEquals(task2, history.get(0), "Remaining task shouid be Task2");
+    }
+
+    @Test
+    void shouldKeepOrderAfterMultipleAddAndRemoves() {
+        Task task1 = new Task("Task1", "Desc", Status.NEW);
+        task1.setId(1);
+        Task task2 = new Task("Task2", "Desc", Status.NEW);
+        task2.setId(2);
+        Task task3 = new Task("Task3", "Desc", Status.NEW);
+        task3.setId(3);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(2);
+        historyManager.add(task2);
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(List.of(task1, task3, task2), history, "Task2 should be last after re-adding");
     }
 }
