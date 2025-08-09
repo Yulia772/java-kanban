@@ -47,37 +47,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private static Task fromString(String line) {
-        String[] fields = line.split(",");
-        int id = Integer.parseInt(fields[0]);
-        String type = fields[1];
-        String name = fields[2];
-        Status status = Status.valueOf(fields[3]);
-        String description = fields[4];
-
-        if ("TASK".equals(type)) {
-            Task task = new Task(name, description, status);
-            task.setId(id);
-            return task;
-        } else if ("EPIC".equals(type)) {
-            Epic epic = new Epic(name, description);
-            epic.setId(id);
-            epic.setStatus(status);
-            return epic;
-        } else if ("SUBTASK".equals(type)) {
-            int epicId = Integer.parseInt(fields[5]);
-            Subtask subtask = new Subtask(name, description, status, epicId);
-            subtask.setId(id);
-            return subtask;
-        } else {
-            throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
-        }
-    }
-
-    private static String getType(String line) {
-        return line.split(",")[1];
-    }
-
     public static void main(String[] args) {
         File file = new File("tasks.csv");
 
@@ -105,23 +74,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         System.out.println(loadedManager.getAllSubtasks());
     }
 
-    protected void save() {
-        try (Writer writer = new FileWriter(file, StandardCharsets.UTF_8, false)) {
+    private static Task fromString(String line) {
+        String[] fields = line.split(",");
+        int id = Integer.parseInt(fields[0]);
+        String type = fields[1];
+        String name = fields[2];
+        Status status = Status.valueOf(fields[3]);
+        String description = fields[4];
 
-            writer.write("id,type,name,status,description,epic\n");
-
-            for (Task task : getAllTasks()) {
-                writer.write(toString(task) + "\n");
-            }
-            for (Epic epic : getAllEpics()) {
-                writer.write(toString(epic) + "\n");
-            }
-            for (Subtask subtask : getAllSubtasks()) {
-                writer.write(toString(subtask) + "\n");
-            }
-
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при сохранени в файл: " + file.getName(), e);
+        if ("TASK".equals(type)) {
+            Task task = new Task(name, description, status);
+            task.setId(id);
+            return task;
+        } else if ("EPIC".equals(type)) {
+            Epic epic = new Epic(name, description);
+            epic.setId(id);
+            epic.setStatus(status);
+            return epic;
+        } else if ("SUBTASK".equals(type)) {
+            int epicId = Integer.parseInt(fields[5]);
+            Subtask subtask = new Subtask(name, description, status, epicId);
+            subtask.setId(id);
+            return subtask;
+        } else {
+            throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
     }
 
@@ -177,6 +153,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.deleteAllTasks();
         save();
     }
+
+    private void save() {
+        try (Writer writer = new FileWriter(file, StandardCharsets.UTF_8, false)) {
+
+            writer.write("id,type,name,status,description,epic\n");
+
+            for (Task task : getAllTasks()) {
+                writer.write(toString(task) + "\n");
+            }
+            for (Epic epic : getAllEpics()) {
+                writer.write(toString(epic) + "\n");
+            }
+            for (Subtask subtask : getAllSubtasks()) {
+                writer.write(toString(subtask) + "\n");
+            }
+
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при сохранени в файл: " + file.getName(), e);
+        }
+    }
+
 
     private String toString(Task task) {
         String type;
