@@ -10,6 +10,8 @@ import task.Task;
 public class Main {
 
     public static void main(String[] args) {
+
+
         TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Задача1", "полить цветы", Status.NEW);

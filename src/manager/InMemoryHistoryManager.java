@@ -38,6 +38,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         return result;
     }
 
+    @Override
+    public void clearHistory() {
+        nodeMap.clear();
+        head = null;
+        tail = null;
+    }
 
     private void linkLast(Task task) {
         Node newNode = new Node(tail, task, null);
