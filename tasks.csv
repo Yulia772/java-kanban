@@ -1,0 +1,6 @@
+id,type,name,status,description,epic
+1,TASK,Задача1,NEW,полить цветы,
+2,TASK,Задача2,IN_PROGRESS,убрать в комнате,
+3,EPIC,Эпик с подзадачами,NEW,переезд,
+4,SUBTASK,Подзадача1,NEW,Упаковать коробки,3
+5,SUBTASK,Подзадача2,NEW,перенести вещи,3
