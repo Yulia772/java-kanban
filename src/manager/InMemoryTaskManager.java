@@ -8,17 +8,8 @@ import task.Task;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected Map<Integer, Task> tasks = new HashMap<>();
-    protected Map<Integer, Subtask> subtasks = new HashMap<>();
-    protected Map<Integer, Epic> epics = new HashMap<>();
-    protected HistoryManager historyManager;
-    protected int idCounter = 1;
     protected final NavigableSet<Task> prioritized = new TreeSet<>((t1, t2) -> {
         LocalDateTime s1 = t1.getStartTime();
         LocalDateTime s2 = t2.getStartTime();
@@ -34,6 +25,11 @@ public class InMemoryTaskManager implements TaskManager {
 
         return Integer.compare(t1.getId(), t2.getId());
     });
+    protected Map<Integer, Task> tasks = new HashMap<>();
+    protected Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected Map<Integer, Epic> epics = new HashMap<>();
+    protected HistoryManager historyManager;
+    protected int idCounter = 1;
 
     public InMemoryTaskManager() {
         this.historyManager = Managers.getDefaultHistory();
@@ -49,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
         Task copy = task.copy();
         copy.setId(id);
 
-        if(intersectsNeighbors(copy)) {
+        if (intersectsNeighbors(copy)) {
             throw new IllegalStateException("Временной конфликт: задача пересекается с другой");
         }
 
@@ -266,7 +262,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (cand.getStartTime() == null) return false;
         Task lower = prioritized.lower(cand);
         Task higher = prioritized.higher(cand);
-        return  (lower != null && intersects(cand, lower)) || (higher != null && intersects(cand,higher));
+        return (lower != null && intersects(cand, lower)) || (higher != null && intersects(cand, higher));
     }
 }
 

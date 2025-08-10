@@ -5,11 +5,11 @@ import task.Status;
 import task.Subtask;
 import task.Task;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 
@@ -122,19 +122,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 Task task = new Task(name, description, status, duration, start);
                 task.setId(id);
                 return task;
-        }
+            }
             case "EPIC" -> {
                 Epic epic = new Epic(name, description);
                 epic.setId(id);
                 epic.setStatus(status);
                 return epic;
-        }
+            }
             case "SUBTASK" -> {
                 if (epicId == null) throw new IllegalArgumentException("SUBTASK без epicId");
                 Subtask subtask = new Subtask(name, description, status, epicId, duration, start);
                 subtask.setId(id);
                 return subtask;
-        }
+            }
             default -> throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
     }
@@ -227,7 +227,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         String durationMin;
         if (task.getDuration() == null) {
-            durationMin ="";
+            durationMin = "";
         } else {
             durationMin = String.valueOf(task.getDuration().toMinutes());
         }
@@ -242,7 +242,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String end;
         if (task.getEndTime() == null) {
             end = "";
-        } else  {
+        } else {
             end = task.getEndTime().format(DTF);
         }
 
