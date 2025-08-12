@@ -33,16 +33,6 @@ public class HttpTaskServer {
         this(Managers.getDefault());
     }
 
-    public void start() {
-        server.start();
-        System.out.println("HTTP-сервер запущен на порту 8080");
-    }
-
-    public void stop(int delay) {
-        server.stop(delay);
-    }
-
-
     public static Gson createGson() {
         return new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new GsonAdapters.LocalDateTimeAdapter())
@@ -53,5 +43,14 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws IOException {
         new HttpTaskServer().start();
+    }
+
+    public void start() {
+        server.start();
+        System.out.println("HTTP-сервер запущен на порту 8080");
+    }
+
+    public void stop(int delay) {
+        server.stop(delay);
     }
 }

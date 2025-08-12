@@ -13,13 +13,16 @@ class TasksHandler extends BaseHttpHandler implements com.sun.net.httpserver.Htt
     private final TaskManager manager;
     private final Gson gson;
 
-    TasksHandler(TaskManager manager, Gson gson) { this.manager = manager; this.gson = gson; }
+    TasksHandler(TaskManager manager, Gson gson) {
+        this.manager = manager;
+        this.gson = gson;
+    }
 
     @Override
     public void handle(HttpExchange h) throws IOException {
         try {
             String method = h.getRequestMethod();
-            Map<String,String> q = queryParams(h);
+            Map<String, String> q = queryParams(h);
             String idStr = q.get("id");
 
             switch (method) {
@@ -51,7 +54,10 @@ class TasksHandler extends BaseHttpHandler implements com.sun.net.httpserver.Htt
                     } else {
                         int id = Integer.parseInt(idStr);
                         if (manager.getTask(id) == null) send404(h, "Task " + id + " not found");
-                        else { manager.deleteTask(id); send201(h); }
+                        else {
+                            manager.deleteTask(id);
+                            send201(h);
+                        }
                     }
                 }
                 default -> send500(h, "Unsupported method " + method);

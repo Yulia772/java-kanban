@@ -8,14 +8,15 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HistoryPrioritizedApiTest extends AbstractHttpTest {
 
     @Test
     void history_returns200() throws Exception {
         // чуть активности, чтобы не было пусто
-        Task t = manager.addTask(new Task("T","", Status.NEW, Duration.ofMinutes(5),
+        Task t = manager.addTask(new Task("T", "", Status.NEW, Duration.ofMinutes(5),
                 LocalDateTime.parse("2025-08-12T07:00:00")));
         GET("/tasks?id=" + t.getId());
 

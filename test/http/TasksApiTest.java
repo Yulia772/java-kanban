@@ -9,7 +9,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TasksApiTest extends AbstractHttpTest {
 
@@ -34,7 +35,7 @@ class TasksApiTest extends AbstractHttpTest {
 
     @Test
     void deleteAllTasks_returns201_and_listEmpty() throws Exception {
-        POST("/tasks", gson.toJson(new Task("A","", Status.NEW, null, null)));
+        POST("/tasks", gson.toJson(new Task("A", "", Status.NEW, null, null)));
         HttpResponse<String> del = DELETE("/tasks");
         assertEquals(201, del.statusCode());
         assertTrue(manager.getAllTasks().isEmpty());
@@ -42,9 +43,9 @@ class TasksApiTest extends AbstractHttpTest {
 
     @Test
     void addTask_timeConflict_returns406() throws Exception {
-        POST("/tasks", gson.toJson(new Task("A","", Status.NEW, Duration.ofMinutes(60),
+        POST("/tasks", gson.toJson(new Task("A", "", Status.NEW, Duration.ofMinutes(60),
                 LocalDateTime.parse("2025-08-12T10:00:00"))));
-        Task conflict = new Task("B","", Status.NEW, Duration.ofMinutes(30),
+        Task conflict = new Task("B", "", Status.NEW, Duration.ofMinutes(30),
                 LocalDateTime.parse("2025-08-12T10:30:00"));
         HttpResponse<String> resp = POST("/tasks", gson.toJson(conflict));
         assertEquals(406, resp.statusCode());

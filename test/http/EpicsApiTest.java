@@ -5,13 +5,13 @@ import task.Epic;
 
 import java.net.http.HttpResponse;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicsApiTest extends AbstractHttpTest {
 
     @Test
     void postEpic_returns200_and_stored() throws Exception {
-        Epic e = new Epic("Переезд","Собрать вещи");
+        Epic e = new Epic("Переезд", "Собрать вещи");
         HttpResponse<String> resp = POST("/epics", gson.toJson(e));
         assertEquals(200, resp.statusCode());
 
@@ -27,7 +27,7 @@ class EpicsApiTest extends AbstractHttpTest {
 
     @Test
     void deleteEpic_byId_returns201_then_404_on_get() throws Exception {
-        HttpResponse<String> created = POST("/epics", gson.toJson(new Epic("E","D")));
+        HttpResponse<String> created = POST("/epics", gson.toJson(new Epic("E", "D")));
         assertEquals(200, created.statusCode());
         int id = manager.getAllEpics().get(0).getId();
 

@@ -3,7 +3,9 @@ package http;
 import com.google.gson.Gson;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -35,12 +37,14 @@ abstract class AbstractHttpTest {
         return client.send(HttpRequest.newBuilder(URI.create("http://localhost:8080" + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
+
     protected HttpResponse<String> POST(String path, String json) throws Exception {
         return client.send(HttpRequest.newBuilder(URI.create("http://localhost:8080" + path))
-                        .header("Content-Type","application/json")
+                        .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(json)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
+
     protected HttpResponse<String> DELETE(String path) throws Exception {
         return client.send(HttpRequest.newBuilder(URI.create("http://localhost:8080" + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
